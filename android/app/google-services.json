@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "420129696016",
+    "firebase_url": "https://rsqa-46eef.firebaseio.com",
+    "project_id": "rsqa-46eef",
+    "storage_bucket": "rsqa-46eef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420129696016:android:2ae418e67a70a0eed1dd95",
+        "android_client_info": {
+          "package_name": "com.rsqa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420129696016-48gslg6plkiddpr4d7ie30g0hgd5ckp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNu-pwXqiHkeMIYo5_Ymicf13elh-A0Bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420129696016-48gslg6plkiddpr4d7ie30g0hgd5ckp4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
