@@ -75,8 +75,8 @@ export default class NotifService {
       channelId: 'default-channel-id',
       ticker: 'My Notification Ticker', // (optional)
       autoCancel: true, // (optional) default: true
-      largeIcon: 'logo', // (optional) default: "ic_launcher"
-      smallIcon: 'logo', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+      largeIcon: 'ic', // (optional) default: "ic_launcher"
+      smallIcon: "ic", // (optional) default: "ic_notification" with fallback for "ic_launcher"
       bigText:  message, // (optional) default: "message" prop
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000

@@ -10,6 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.2",
+    "@react-native-community/art": "^1.2.0",
+    "@react-native-community/blur": "^3.6.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.8.2",
     "@react-navigation/stack": "^5.11.1",
@@ -17,11 +20,14 @@
     "react-native": "0.63.3",
     "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "^1.8.0",
+    "react-native-linear-gradient": "^2.5.6",
+    "react-native-neomorph-shadows": "^1.1.2",
     "react-native-notification": "^2.0.0",
     "react-native-push-notification": "^6.1.2",
     "react-native-reanimated": "^1.13.1",
     "react-native-safe-area-context": "^3.1.8",
-    "react-native-screens": "^2.12.0"
+    "react-native-screens": "^2.12.0",
+    "react-native-vector-icons": "^7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

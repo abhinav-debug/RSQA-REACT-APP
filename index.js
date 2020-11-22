@@ -1,16 +1,14 @@
-/**
- * @format
- */
-
 import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import NotifService from './Components/NotificationComponent/NotifService';
-import firebase from 'react-native-firebase';
-import config from './react-native.config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-firebase.initializeApp(config);
+AsyncStorage.setItem("token","null");
 
 
 AppRegistry.registerComponent(appName, () => App);
+// AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () =>
+//   console.log('bgMessaging: ', new Date()),
+// );

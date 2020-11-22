@@ -1,124 +1,348 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, ImageBackground, Button, Alert, KeyboardAvoidingView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Keyboard, Animated, Easing } from 'react-native';
 import { Dimensions } from "react-native";
-import * as firebase from 'react-native-firebase';
-import NotifService from '../NotificationComponent/NotifService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../Loader/Loader';
+import Icon from 'react-native-vector-icons/AntDesign';
+import LinearGradient from 'react-native-linear-gradient'
 
+const bg = require('../../android/app/src/main/assets/images/logo.png');
 const width = Dimensions.get('window').width; //full width
 const height = Dimensions.get('window').height; //full height
-const bg = require('../../android/app/src/main/assets/images/bg.jpg');
+const AnimOpacity = new Animated.Value(0);
+const AnimOpacityText = new Animated.Value(0);
+
+
+const animate = () => {
+         Animated.sequence([
+                Animated.timing(AnimOpacity, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false,
+                        easing: Easing.in
+                }),
+                Animated.timing(AnimOpacityText, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false,
+                        easing: Easing.in
+                }),
+                Animated.timing(AnimOpacityText, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false,
+                        easing: Easing.in
+                }),
+                Animated.timing(AnimOpacityText, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false,
+                        easing: Easing.in
+                })
+        ]).start();
+}
+
+const Opacity = AnimOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1]
+});
+
+const Opacity1 = AnimOpacityText.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1]
+});
+
+
 
 export default class Login extends React.Component {
-          componentDidMount() {
-                    // this.timer = setInterval(() => this.getQueue(), 1000);
-          }
-          async getQueue() {
-                    // fetch('https://facebook.github.io/react-native/movies.json', { method: "GET" })
-                    //           .then((response) => response.json())
-                    //           .then((responseData) => {
-                    //                     //set your data here
-                    //                     console.log(responseData);
-                    //           })
-                    //           .catch((error) => {
-                    //                     console.error(error);
-                    //           });
 
-          }
-          render() {
-                    return (
-                              <View style={styles.container}>
-                                        <ImageBackground style={styles.image} source={bg} blurRadius={0}>
-                                                  <KeyboardAvoidingView behavior='position'>
-                                                            <View style={styles.card}>
-                                                                      <Text style={styles.adminText}>ADMIN LOGIN</Text>
-                                                                      <TextInput style={styles.login} placeholder="Username" />
-                                                                      <TextInput style={styles.login} placeholder="Password" />
-                                                                      <TouchableOpacity style={styles.btn} >
-                                                                                <Text style={{ fontSize: 20 }}>Login</Text>
-                                                                      </TouchableOpacity>
-                                                            </View>
-                                                            <Text style={styles.text, styles.or}>OR</Text>
-                                                            <Text style={styles.text}>Enter the queue :</Text>
-                                                            <TextInput style={styles.input} placeholder="ENTER YOUR NAME" />
-                                                            <TouchableOpacity style={styles.btn} >
-                                                                      <Text style={{ fontSize: 20 }}>Enter Queue</Text>
-                                                            </TouchableOpacity>
-                                                  </KeyboardAvoidingView>
-                                        </ImageBackground>
-                              </View>
-                    )
-          }
+        constructor(props) {
+                super(props);
+                this._isMounted = false;
+                this.state = {
+                        username: "",
+                        btnText: "Enter in Queue",
+                        pass: false,
+                        error: "",
+                        isLoading: true,
+                        id: null
+                }
+        }
+        auth = async (navigation) => {
+
+                await AsyncStorage.getItem("authenticated").then(res => {
+                        if (res === 'true') {
+                                navigation.navigate("AdminHome");
+                        }
+                })
+                await AsyncStorage.getItem("id").then(res => {
+                        if (res !== null) {
+                                this.props.navigation.navigate("Home")
+                        }
+                })
+        }
+
+        componentDidMount() {
+                // this.timer = setInterval(() => this.check(), 1000);
+                const { navigation } = this.props;
+                this._isMounted = true;
+                AnimOpacity.setValue(0);
+                AnimOpacityText.setValue(0);
+                animate();
+                navigation.addListener('focus', async () => {
+                        this.setState({ username: "", pass: false });
+                        if (this.textInput !== null)
+                                this.textInput.clear();
+                });
+                this.setState({ isLoading: false });
+        }
+
+        render() {
+                let error = null;
+                const { navigation } = this.props;
+                this.auth(navigation);
+                const changeUsername = (value) => {
+                        this.setState({ username: value });
+                        if (value === 'admin@123') {
+                                this.setState({ btnText: 'Login', pass: true });
+                        } else {
+                                this.setState({ btnText: 'Enter in queue', pass: false });
+                        }
+                }
+                const changePassword = async (value) => {
+                        await AsyncStorage.setItem("pass", value);
+                }
+                const login = async () => {
+                        this.setState({ isLoading: true });
+                        let password = "";
+                        Keyboard.dismiss();
+                        await AsyncStorage.getItem("pass").then(p => password = p);
+                        if (this.state.btnText === 'Login') {
+                                fetch('https://rsqueueapp.herokuapp.com/rsqa/api/login', {
+                                        method: "POST",
+                                        headers: {
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                                username: this.state.username,
+                                                password: password,
+                                        })
+                                }).then((response) => response.text())
+                                        .then(async (responseData) => {
+                                                if (responseData === 'success') {
+                                                        await AsyncStorage.setItem("authenticated", "true");
+                                                        navigation.navigate("AdminHome");
+                                                } else {
+                                                        this.setState({ error: "Invalid Username Password !" });
+                                                        this._isMounted = true;
+                                                        setInterval(() => {
+                                                                this.setState({ error: "" });
+                                                        }, 3000);
+                                                }
+                                                this.setState({ isLoading: false });
+                                        })
+                                        .catch((e) => {
+                                                console.error(e);
+                                        });
+                        } else {
+                                let token = null;
+                                await AsyncStorage.getItem("token").then(tok => token = tok);
+                                if (this.state.username !== "") {
+                                        fetch('https://rsqueueapp.herokuapp.com/rsqa/api/add', {
+                                                method: "PUT",
+                                                headers: {
+                                                        'Accept': 'application/json',
+                                                        'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({
+                                                        name: this.state.username,
+                                                        token: token,
+                                                })
+                                        }).then((response) => response.text())
+                                                .then(async (responseData) => {
+                                                        await AsyncStorage.setItem("id", responseData);
+                                                        navigation.navigate("Home");
+                                                        this.setState({ isLoading: false });
+                                                })
+                                                .catch((e) => {
+                                                        console.error(e);
+                                                });
+                                } else {
+                                        this.setState({ error: "Please enter a valid name !" })
+                                        this.setState({ isLoading: false });
+                                }
+                        }
+                }
+
+                return (
+                        <View style={styles.container} >
+                                <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+                                {this.state.isLoading ? <Loader  height /> : null}
+                                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0}>
+                                        <View style={styles.image}>
+                                                <View style={styles.top}>
+                                                        <Image style={styles.adminText} source={bg} />
+                                                        <View style={{position: 'absolute',bottom:0}}>
+                                                                <Animated.View style={{ opacity: Opacity1, justifyContent: 'center' }}>
+                                                                        <Text style={styles.welcome}>WELCOME TO RSQA </Text>
+                                                                </Animated.View>
+                                                        </View>
+                                                </View>
+                                                <LinearGradient   colors={['#00000070','#d50100']} style={{width:width,height:20}}/>
+                                                <View style={styles.wrap}>
+                                                        <Animated.View style={{ opacity: Opacity }}>
+                                                                <Text style={styles.error}>{this.state.error}</Text>
+                                                                <TextInput style={styles.login}
+                                                                        ref={input => { this.textInput = input }}
+                                                                        placeholder="Enter your name"
+                                                                        placeholderTextColor='#000000'
+                                                                        textAlignVertical='center'
+                                                                        textAlign='center'
+                                                                        onChangeText={(text) => changeUsername(text)}
+                                                                        value={this.state.username}
+                                                                />
+                                                                {this.state.pass === true ? <TextInput
+                                                                        onChangeText={(value) => changePassword(value)}
+                                                                        secureTextEntry={true}
+                                                                        password={true}
+                                                                        style={styles.login1}
+                                                                        placeholderTextColor='#000000'
+                                                                        placeholder="Password"
+                                                                        textAlign='center'
+                                                                        textAlignVertical='center'
+                                                                />
+                                                                        :
+                                                                        null}
+                                                                <TouchableOpacity style={styles.btn} onPress={() => login()}>
+                                                                        {/* <Text style={{ fontSize: 20, color: 'black' }}>{this.state.btnText}</Text> */}
+                                                                        <Icon name="arrowright" size={50} />
+                                                                </TouchableOpacity>
+                                                        </Animated.View>
+                                                </View>
+                                        </View>
+                                </KeyboardAvoidingView>
+                        </View>
+                )
+        }
 }
 const styles = StyleSheet.create({
 
-          container: {
-                    flex: 1,
-          }, image: {
-                    width: width + 10,
-                    height: height + 10,
-          }, input: {
-                    padding: 0,
-                    borderRadius: 100 / 2,
-                    textAlign: 'center',
-                    width: width - 40,
-                    alignSelf: 'center',
-                    height: 60,
-                    backgroundColor: 'transparent',
-                    fontSize: 20,
-                    fontFamily: 'NotoSansJP',
-                    color: 'black',
-                    borderColor: '#FF000070',
-                    borderWidth: 2,
-          }, text: {
-                    marginTop: 20,
-                    marginLeft: 10,
-                    padding: 10,
-                    fontSize: 20,
-                    fontFamily: 'NotoSansJP-Bold',
-                    color: '#000000',
-          }, btn: {
-                    position: 'relative',
-                    padding: 10,
-                    marginTop: 10,
-                    width: width - 200,
-                    alignSelf: 'center',
-                    borderRadius: 100 / 2,
-                    backgroundColor: '#FF000090'
-                    , alignItems: 'center',
-                    fontSize: 20,
-                    fontFamily: 'NotoSansJP-Regular',
-          }, or: {
-                    textAlign: 'center',
-                    marginTop: 10,
-                    fontSize: 25,
-          }, card: {
-                    textAlign: 'center',
-                    marginTop: 10,
-                    backgroundColor: '#f0ffff90',
-                    color: '#ffffff',
-                    width: width - 40,
-                    height: height - 300,
-                    alignSelf: 'center',
-                    borderRadius: 40 / 2,
-          }, adminText: {
-                    alignSelf: 'center',
-                    fontSize: 40,
-                    color: '#000000',
-                    marginBottom: 50,
-                    marginTop: 40,
-                    fontFamily: 'NotoSansJP-Regular',
-          }, login: {
-                    marginTop: 20,
-                    marginBottom: 20,
-                    borderWidth: 2,
-                    marginLeft: 10,
-                    marginRight: 10,
-                    borderColor: '#FF000070',
-                    textAlign: 'center',
-                    borderRadius: 100 / 2,
-                    fontSize: 20,
-                    fontFamily: 'NotoSansJP-Regular',
-          }
+        container: {
+                flex: 1,
+        }, image: {
+                width: width + 10,
+                height: height + 20,
+                backgroundColor: '#d50100'
+        }, text: {
+                marginTop: 20,
+                marginLeft: 10,
+                padding: 10,
+                fontSize: 20,
+                fontFamily: 'NotoSansJP-Bold',
+                color: '#000000',
+        }, btn: {
+                marginTop: 40,
+                width: 80,
+                height: 80,
+                alignSelf: 'center',
+                borderRadius: 100 / 2,
+                backgroundColor: '#ffffff',
+                alignItems: 'center',
+                fontSize: 20,
+                fontFamily: 'NotoSansJP-Regular',
+                justifyContent: 'center',
+                shadowColor: "#000",
+                shadowOffset: {
+                        width: 0,
+                        height: 12,
+                },
+                shadowOpacity: 0.58,
+                shadowRadius: 16.00,
+                elevation: 24,
+        }, adminText: {
+                width: '40%',
+                height: '20%',
+                alignSelf: 'center',
+                padding: '10%',
+                marginTop:'10%'
+        }, login: {
+                marginTop: "5%",
+                borderWidth: 2,
+                marginLeft: "5%",
+                marginRight: "5%",
+                borderColor: '#000000',
+                borderRadius: 100 / 2,
+                fontSize: 20,
+                fontFamily: 'Trispace-Medium',
+                backgroundColor: '#ffffff',
+                shadowColor: "#000",
+                shadowOffset: {
+                        width: 0,
+                        height: 12,
+                },
+                shadowOpacity: 0.58,
+                shadowRadius: 16.00,
+                elevation: 24,
+        }, login1: {
+                marginTop: '10%',
+                borderWidth: 2,
+                marginLeft: "5%",
+                marginRight: "5%",
+                borderColor: '#000000',
+                borderRadius: 100 / 2,
+                fontSize: 20,
+                fontFamily: 'Trispace-Medium',
+                backgroundColor: '#ffffff',
+                shadowColor: "#000",
+                shadowOffset: {
+                        width: 0,
+                        height: 12,
+                },
+                shadowOpacity: 0.58,
+                shadowRadius: 16.00,
+                elevation: 24,
+        }, wrap: {
+                flex: 1,
+                width: width,
+                height: height*.7,
+                position: 'relative',
+                alignContent: 'center',
+                backgroundColor: '#d50100', //#10a181
+                // borderTopColor: '#000000',
+                // borderTopWidth: 5,
+        }, error: {
+                color: '#000000',
+                textAlign: 'center',
+                fontSize: 20,
+                marginTop: '10%',
+                fontFamily: 'Trispace-Medium',
+                justifyContent: 'center'
+        }, bottom: {
+                flex: 1,
+                position: 'absolute',
+                flexDirection: 'row',
+                bottom: '5%',
+                alignSelf: 'center'
+        }, welcome: {
+                fontSize: 30,
+                textAlign: 'center',
+                fontFamily: 'Trispace-Regular',
+                padding: 5,
+                marginBottom: '5%',
+                marginTop: '5%',
+                width:width
+        },top:{
+                width:width,
+                height:height*.3,
+                shadowColor: "#000000",
+                shadowOffset: {
+                        width: 0,
+                        height: 12,
+                },
+                backgroundColor:'#ffffff',
+                shadowOpacity: 1,
+                shadowRadius: 16.00,
+        }
 })
