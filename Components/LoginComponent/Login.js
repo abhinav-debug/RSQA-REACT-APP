@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import { View, StyleSheet, StatusBar, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Keyboard, Animated, Easing } from 'react-native';
@@ -5,7 +6,9 @@ import { Dimensions } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from '../Loader/Loader';
 import Icon from 'react-native-vector-icons/AntDesign';
-import LinearGradient from 'react-native-linear-gradient'
+import LinearGradient from 'react-native-linear-gradient';
+import { Shadow } from 'react-native-neomorph-shadows';
+
 
 const bg = require('../../android/app/src/main/assets/images/logo.png');
 const width = Dimensions.get('window').width; //full width
@@ -13,9 +16,17 @@ const height = Dimensions.get('window').height; //full height
 const AnimOpacity = new Animated.Value(0);
 const AnimOpacityText = new Animated.Value(0);
 
+const p1 = require('../../android/app/src/main/assets/images/left1.png');
+const p2 = require('../../android/app/src/main/assets/images/left2.png');
+const p3 = require('../../android/app/src/main/assets/images/left3.png');
+const p4 = require('../../android/app/src/main/assets/images/left4.png');
+const p5 = require('../../android/app/src/main/assets/images/left5.png');
+const p6 = require('../../android/app/src/main/assets/images/left6.png');
+
+const stall = require('../../android/app/src/main/assets/images/bottom1.png');
 
 const animate = () => {
-         Animated.sequence([
+        Animated.sequence([
                 Animated.timing(AnimOpacity, {
                         toValue: 1,
                         duration: 1000,
@@ -179,18 +190,18 @@ export default class Login extends React.Component {
                 return (
                         <View style={styles.container} >
                                 <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-                                {this.state.isLoading ? <Loader  height /> : null}
+                                {this.state.isLoading ? <Loader height /> : null}
                                 <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={0}>
                                         <View style={styles.image}>
                                                 <View style={styles.top}>
                                                         <Image style={styles.adminText} source={bg} />
-                                                        <View style={{position: 'absolute',bottom:0}}>
+                                                        <View style={{ position: 'absolute', bottom: 0 }}>
                                                                 <Animated.View style={{ opacity: Opacity1, justifyContent: 'center' }}>
                                                                         <Text style={styles.welcome}>WELCOME TO RSQA </Text>
                                                                 </Animated.View>
                                                         </View>
                                                 </View>
-                                                <LinearGradient   colors={['#00000070','#d50100']} style={{width:width,height:20}}/>
+                                                <LinearGradient colors={['#00000070', '#d50100']} style={{ width: width, height: 20 }} />
                                                 <View style={styles.wrap}>
                                                         <Animated.View style={{ opacity: Opacity }}>
                                                                 <Text style={styles.error}>{this.state.error}</Text>
@@ -215,14 +226,35 @@ export default class Login extends React.Component {
                                                                 />
                                                                         :
                                                                         null}
-                                                                <TouchableOpacity style={styles.btn} onPress={() => login()}>
-                                                                        {/* <Text style={{ fontSize: 20, color: 'black' }}>{this.state.btnText}</Text> */}
-                                                                        <Icon name="arrowright" size={50} />
-                                                                </TouchableOpacity>
+                                                                <View style={{ justifyContent: 'center', alignContent: 'center', flexDirection: 'row', alignSelf: 'center' }}>
+                                                                        <Shadow
+                                                                                style={{
+                                                                                        shadowRadius: 15,
+                                                                                        shadowOpacity: 1,
+                                                                                        borderRadius: 100 / 2,
+                                                                                        shadowColor: '#000000',
+                                                                                        backgroundColor: '#ffffff',
+                                                                                        width: 80,
+                                                                                        height: 80,
+                                                                                        justifyContent: 'center',
+                                                                                        marginTop: 40,
+                                                                                        alignSelf: 'center',
+                                                                                        alignItems: 'center',
+                                                                                        fontSize: 20,
+                                                                                        fontFamily: 'NotoSansJP-Regular',
+                                                                                }}>
+                                                                                <TouchableOpacity onPress={() => login()}>
+                                                                                        <Icon name="arrowright" size={50} />
+                                                                                </TouchableOpacity>
+                                                                        </Shadow>
+                                                                </View>
                                                         </Animated.View>
                                                 </View>
                                         </View>
                                 </KeyboardAvoidingView>
+                                <View style={styles.bottom}>
+                                        <Image source={stall} style={{bottom:0}}/>
+                                </View>
                         </View>
                 )
         }
@@ -231,6 +263,8 @@ const styles = StyleSheet.create({
 
         container: {
                 flex: 1,
+                width: width + 10,
+                height: height + 20,
         }, image: {
                 width: width + 10,
                 height: height + 20,
@@ -253,20 +287,12 @@ const styles = StyleSheet.create({
                 fontSize: 20,
                 fontFamily: 'NotoSansJP-Regular',
                 justifyContent: 'center',
-                shadowColor: "#000",
-                shadowOffset: {
-                        width: 0,
-                        height: 12,
-                },
-                shadowOpacity: 0.58,
-                shadowRadius: 16.00,
-                elevation: 24,
         }, adminText: {
                 width: '40%',
                 height: '20%',
                 alignSelf: 'center',
                 padding: '10%',
-                marginTop:'10%'
+                marginTop: '10%'
         }, login: {
                 marginTop: "5%",
                 borderWidth: 2,
@@ -306,7 +332,7 @@ const styles = StyleSheet.create({
         }, wrap: {
                 flex: 1,
                 width: width,
-                height: height*.7,
+                height: height * .7,
                 position: 'relative',
                 alignContent: 'center',
                 backgroundColor: '#d50100', //#10a181
@@ -320,11 +346,8 @@ const styles = StyleSheet.create({
                 fontFamily: 'Trispace-Medium',
                 justifyContent: 'center'
         }, bottom: {
-                flex: 1,
                 position: 'absolute',
-                flexDirection: 'row',
-                bottom: '5%',
-                alignSelf: 'center'
+                bottom:0,
         }, welcome: {
                 fontSize: 30,
                 textAlign: 'center',
@@ -332,16 +355,16 @@ const styles = StyleSheet.create({
                 padding: 5,
                 marginBottom: '5%',
                 marginTop: '5%',
-                width:width
-        },top:{
-                width:width,
-                height:height*.3,
+                width: width
+        }, top: {
+                width: width,
+                height: height * .3,
                 shadowColor: "#000000",
                 shadowOffset: {
                         width: 0,
                         height: 12,
                 },
-                backgroundColor:'#ffffff',
+                backgroundColor: '#ffffff',
                 shadowOpacity: 1,
                 shadowRadius: 16.00,
         }

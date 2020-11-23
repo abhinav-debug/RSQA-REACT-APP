@@ -17,7 +17,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Neomorph, Shadow } from 'react-native-neomorph-shadows';
+import { Shadow } from 'react-native-neomorph-shadows';
 
 
 const Stack = createStackNavigator();

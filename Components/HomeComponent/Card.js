@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/EvilIcons';
+import Icon from 'react-native-vector-icons/Entypo';
 
 const width = Dimensions.get('window').width; //full width
 const height = Dimensions.get('window').height; //full height
@@ -19,7 +19,7 @@ const card = (props) => {
                                                   <Text style={styles.text}>{props.id}</Text>
                                                   <Text style={styles.text} >{props.name}</Text>
                                                   {props.close ? <TouchableOpacity onPress={props.delete}>
-                                                            <Text ><Icon style={{ position: 'absolute', justifyContent: 'center', alignSelf: 'center' }} name="close" size={70} color="#FF000090" /></Text>
+                                                            <Text style={{justifyContent:'center',alignContent:'center',marginTop:10,marginRight:10}}><Icon style={{alignSelf: 'center' }} name="remove-user" size={40} color="#d50100" /></Text>
                                                   </TouchableOpacity> : null
                                                   }
                                         </View>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
                     marginLeft: '5%',
                     marginRight: '5%',
                     textTransform: 'uppercase',
-                    fontFamily: 'Trispace-ExtraLight',
+                    fontFamily: 'Trispace-Medium',
           }
 });
 
